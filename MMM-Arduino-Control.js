@@ -95,7 +95,6 @@ Module.register("MMM-Arduino-Control", {
 
 		var wrapper = document.createElement("div");
 		wrapper.className = "home-assistant";
-		wrapper.innerHTML = "ssss";
 		if (this.dataRequest) {
 
 			var homeassistantLegend = document.createElement("legend");
@@ -124,8 +123,6 @@ Module.register("MMM-Arduino-Control", {
 			relays.appendChild(relaysLegend);
 			wrapper.appendChild(relays);
 		}
-
-
 
 		return wrapper;
 	},
