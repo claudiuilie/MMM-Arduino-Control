@@ -1,8 +1,8 @@
 /* Magic Mirror
- * Node Helper: {{MODULE_NAME}}
+ * Node Helper: MMM-Arduino-Control
  *
- * By {{AUTHOR_NAME}}
- * {{LICENSE}} Licensed.
+ * By Claudiu Ilie
+ * MIT Licensed.
  */
 
 var NodeHelper = require("node_helper");
@@ -18,7 +18,7 @@ module.exports = NodeHelper.create({
 	 * argument payload mixed - The payload of the notification.
 	 */
 	socketNotificationReceived: function(notification, payload) {
-		if (notification === "{{MODULE_NAME}}-NOTIFICATION_TEST") {
+		if (notification === "MMM-Arduino-Control-NOTIFICATION_TEST") {
 			console.log("Working notification system. Notification:", notification, "payload: ", payload);
 			// Send notification
 			this.sendNotificationTest(this.anotherFunction()); //Is possible send objects :)
@@ -27,13 +27,13 @@ module.exports = NodeHelper.create({
 
 	// Example function send notification test
 	sendNotificationTest: function(payload) {
-		this.sendSocketNotification("{{MODULE_NAME}}-NOTIFICATION_TEST", payload);
+		this.sendSocketNotification("MMM-Arduino-Control-NOTIFICATION_TEST", payload);
 	},
 
 	// this you can create extra routes for your module
 	extraRoutes: function() {
 		var self = this;
-		this.expressApp.get("/{{MODULE_NAME}}/extra_route", function(req, res) {
+		this.expressApp.get("/MMM-Arduino-Control/extra_route", function(req, res) {
 			// call another function
 			values = self.anotherFunction();
 			res.send(values);

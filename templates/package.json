@@ -1,10 +1,10 @@
 {
-  "name": "{{MODULE_NAME}}",
+  "name": "MMM-Arduino-Control",
   "version": "1.0.0",
-  "description": "{{DESCRIPTION}}",
-  "main": "{{MODULE_NAME}}.js",
-  "author": "{{AUTHOR_NAME}}",
-  "license": "{{LICENSE}}",
+  "description": "Arduino Control Module",
+  "main": "MMM-Arduino-Control.js",
+  "author": "Claudiu Ilie",
+  "license": "MIT",
   "devDependencies": {
     "grunt": "latest",
     "grunt-eslint": "latest",

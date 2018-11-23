@@ -1,13 +1,13 @@
 /* global Module */
 
 /* Magic Mirror
- * Module: {{MODULE_NAME}}
+ * Module: MMM-Arduino-Control
  *
- * By {{AUTHOR_NAME}}
- * {{LICENSE}} Licensed.
+ * By Claudiu Ilie
+ * MIT Licensed.
  */
 
-Module.register("{{MODULE_NAME}}", {
+Module.register("MMM-Arduino-Control", {
 	defaults: {
 		updateInterval: 60000,
 		retryDelay: 5000
@@ -39,7 +39,7 @@ Module.register("{{MODULE_NAME}}", {
 	getData: function() {
 		var self = this;
 
-		var urlApi = "https://jsonplaceholder.typicode.com/posts/1";
+		var urlApi = "https://192.168.1.200" ; // arduino ip
 		var retry = true;
 
 		var dataRequest = new XMLHttpRequest();
@@ -63,6 +63,7 @@ Module.register("{{MODULE_NAME}}", {
 			}
 		};
 		dataRequest.send();
+		// console.log(dataRequest)
 	},
 
 
@@ -122,7 +123,7 @@ Module.register("{{MODULE_NAME}}", {
 
 	getStyles: function () {
 		return [
-			"{{MODULE_NAME}}.css",
+			"MMM-Arduino-Control.css",
 		];
 	},
 
@@ -143,12 +144,12 @@ Module.register("{{MODULE_NAME}}", {
 
 		// the data if load
 		// send notification to helper
-		this.sendSocketNotification("{{MODULE_NAME}}-NOTIFICATION_TEST", data);
+		this.sendSocketNotification("MMM-Arduino-Control-NOTIFICATION_TEST", data);
 	},
 
 	// socketNotificationReceived from helper
 	socketNotificationReceived: function (notification, payload) {
-		if(notification === "{{MODULE_NAME}}-NOTIFICATION_TEST") {
+		if(notification === "MMM-Arduino-Control-NOTIFICATION_TEST") {
 			// set dataNotification
 			this.dataNotification = payload;
 			this.updateDom();
