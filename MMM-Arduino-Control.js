@@ -15,7 +15,9 @@ Module.register("MMM-Arduino-Control", {
 
 	},
 
-
+	getStyles: function () {
+		return ["font-awesome.css" , "weather-icons.css" , "MMM-Arduino-Control.css"];
+	},
 
 	start: function () {
 		var self = this;
@@ -94,34 +96,60 @@ Module.register("MMM-Arduino-Control", {
 		// create element wrapper for show into the module
 
 		var wrapper = document.createElement("div");
-		wrapper.className = "home-assistant";
 		if (this.dataRequest) {
 
-			var homeassistantLegend = document.createElement("legend");
-			homeassistantLegend.className = "module-header";
-			homeassistantLegend.innerHTML = "Home Assistant";
-			wrapper.appendChild(homeassistantLegend);
+			var sensors = document.createElement("table");
+			
 
-			var sensors = document.createElement("fieldset");
-			sensors.className = "sensors-assistant";
-			wrapper.appendChild(sensors);
-
-			var sensorsLegend = document.createElement("legend");
-			sensorsLegend.innerHTML = "Sensors";
-			sensors.appendChild(sensorsLegend);
 			for (var i = 0; i < this.dataRequest.tempSensors.length; i++) {
-				console.log(this.dataRequest.tempSensors[i].badge)
+				var tableResults = document.createElement("tr");	
+				var cellIconTemp = document.createElement("td");
+				var cellIconHum = document.createElement("td");
+				var spanCellTemp = document.createElement("td");
+				var valueCellTemp = document.createElement("td");
+				var valueCellHum = document.createElement("td");
+				var emptyCell = document.createElement("td");
 
+				var iconTemp = document.createElement("i");
+				iconTemp.className = "fa";
+				var iconHum = document.createElement("i");
+				iconHum.className = "wi wi-humidity humidityIcon";
 
-				sensors.insertAdjacentHTML('beforeend', `${this.dataRequest.tempSensors[i].badge}<strong id="bedroomTempValue"><span class="badge bedroom">${this.dataRequest.tempSensors[i].temp} ${this.dataRequest.tempSensors[i].unit}</span></strong></br >`)
+				iconTemp.classList.add(this.dataRequest.tempSensors[i].icon); 
+
+				var badgeSpan = document.createElement("span");
+				badgeSpan.innerHTML = this.dataRequest.tempSensors[i].badge;
+				
+				var valueSpanTemp = document.createElement("span");
+				var valueSpanHum = document.createElement("span");
+				
+				valueSpanTemp.innerHTML = this.dataRequest.tempSensors[i].temp + this.dataRequest.tempSensors[i].unit + "&nbsp;&nbsp;";
+				valueSpanHum.innerHTML = this.dataRequest.humiditySensors[i].humidity;
+
+				if (this.dataRequest.humiditySensors[i].humidity > 80){
+					iconHum.classList.add(this.dataRequest.icons[0].humHigh + this.dataRequest.icons[0].humWarning);
+				}
+		
+				valueCellTemp.appendChild(valueSpanTemp);
+				spanCellTemp.appendChild(badgeSpan);
+				cellIconTemp.appendChild(iconTemp);
+				valueCellHum.appendChild(valueSpanHum);
+				cellIconHum.appendChild(iconHum);
+				tableResults.appendChild(cellIconTemp);
+				tableResults.appendChild(spanCellTemp);
+				tableResults.appendChild(valueCellTemp);
+				tableResults.appendChild(emptyCell);   // add
+				tableResults.appendChild(valueCellHum);
+				tableResults.appendChild(cellIconHum);
+				sensors.appendChild(tableResults);
 			}
-			var relays = document.createElement("fieldset");
-			relays.className = "relays-assistant";
-
-			var relaysLegend = document.createElement("legend");
-			relaysLegend.innerHTML = this.dataRequest.relayStatus.bedroom.status;
-			relays.appendChild(relaysLegend);
-			wrapper.appendChild(relays);
+			// var relays = document.createElement("fieldset");
+			// relays.className = "relays-assistant";
+			
+			// var relaysLegend = document.createElement("legend");
+			// relaysLegend.innerHTML = this.dataRequest.relayStatus.bedroom.status;
+			// relays.appendChild(relaysLegend);
+			wrapper.appendChild(sensors);
 		}
 
 		return wrapper;
