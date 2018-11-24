@@ -9,14 +9,14 @@
 
 Module.register("MMM-Arduino-Control", {
 	defaults: {
-		updateInterval: 5000,
+		updateInterval: 50000,
 		retryDelay: 5000,
 		animationSpeed: 2000
 
 	},
 
 	getStyles: function () {
-		return ["font-awesome.css" , "weather-icons.css" , "MMM-Arduino-Control.css"];
+		return ["font-awesome5.css", "weather-icons.css" , "MMM-Arduino-Control.css" ];
 	},
 
 	start: function () {
@@ -108,7 +108,8 @@ Module.register("MMM-Arduino-Control", {
 				var spanCellTemp = document.createElement("td");
 				var valueCellTemp = document.createElement("td");
 				var valueCellHum = document.createElement("td");
-				var emptyCell = document.createElement("td");
+				var emptyCell = document.createElement("i");
+				emptyCell.className ="fas fa-user";
 
 				var iconTemp = document.createElement("i");
 				iconTemp.className = "fa";
