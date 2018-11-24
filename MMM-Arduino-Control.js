@@ -3,7 +3,7 @@
 /* Magic Mirror
  * Module: MMM-Arduino-Control
  *
- * By Claudiu Iliee
+ * By Claudiu Ilie
  * MIT Licensed.
  */
 
