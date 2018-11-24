@@ -136,8 +136,6 @@ Module.register("MMM-Arduino-Control", {
 	processData: function (data) {
 		var self = this;
 		this.dataRequest = data;
-		console.log(data);
-		console.log(this.dataRequest)
 		if (this.loaded === false) { self.updateDom(self, this.config.animationSpeed); }
 		//<------------aici crapa
 		this.loaded = true;
