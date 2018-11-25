@@ -23,6 +23,7 @@ module.exports = NodeHelper.create({
 			// Send notification
 			this.sendNotificationTest(this.anotherFunction()); //Is possible send objects :)
 		}
+
 	},
 
 	// Example function send notification test

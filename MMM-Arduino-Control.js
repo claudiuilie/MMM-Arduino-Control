@@ -9,14 +9,13 @@
 
 Module.register("MMM-Arduino-Control", {
 	defaults: {
-		updateInterval: 50000,
+		updateInterval: 10 * 60 * 1000,
 		retryDelay: 5000,
 		animationSpeed: 2000
-
 	},
 
 	getStyles: function () {
-		return ["font-awesome5.css", "weather-icons.css" , "MMM-Arduino-Control.css" ];
+		return ["font-awesome_5.css", "weather-icons.css", "MMM-Arduino-Control.css"];
 	},
 
 	start: function () {
@@ -99,38 +98,35 @@ Module.register("MMM-Arduino-Control", {
 		if (this.dataRequest) {
 
 			var sensors = document.createElement("table");
-			
+
 
 			for (var i = 0; i < this.dataRequest.tempSensors.length; i++) {
-				var tableResults = document.createElement("tr");	
+				var tableResults = document.createElement("tr");
 				var cellIconTemp = document.createElement("td");
 				var cellIconHum = document.createElement("td");
 				var spanCellTemp = document.createElement("td");
 				var valueCellTemp = document.createElement("td");
 				var valueCellHum = document.createElement("td");
-				var emptyCell = document.createElement("i");
-				emptyCell.className ="fas fa-user";
+
+				// emptyCell.className ="fas fa-user";
 
 				var iconTemp = document.createElement("i");
 				iconTemp.className = "fa";
 				var iconHum = document.createElement("i");
 				iconHum.className = "wi wi-humidity humidityIcon";
 
-				iconTemp.classList.add(this.dataRequest.tempSensors[i].icon); 
+				iconTemp.classList.add(this.dataRequest.tempSensors[i].icon);
 
 				var badgeSpan = document.createElement("span");
 				badgeSpan.innerHTML = this.dataRequest.tempSensors[i].badge;
-				
+
 				var valueSpanTemp = document.createElement("span");
 				var valueSpanHum = document.createElement("span");
-				
+
 				valueSpanTemp.innerHTML = this.dataRequest.tempSensors[i].temp + this.dataRequest.tempSensors[i].unit + "&nbsp;&nbsp;";
 				valueSpanHum.innerHTML = this.dataRequest.humiditySensors[i].humidity;
 
-				if (this.dataRequest.humiditySensors[i].humidity > 80){
-					iconHum.classList.add(this.dataRequest.icons[0].humHigh + this.dataRequest.icons[0].humWarning);
-				}
-		
+
 				valueCellTemp.appendChild(valueSpanTemp);
 				spanCellTemp.appendChild(badgeSpan);
 				cellIconTemp.appendChild(iconTemp);
@@ -139,16 +135,16 @@ Module.register("MMM-Arduino-Control", {
 				tableResults.appendChild(cellIconTemp);
 				tableResults.appendChild(spanCellTemp);
 				tableResults.appendChild(valueCellTemp);
-				tableResults.appendChild(emptyCell);   // add
 				tableResults.appendChild(valueCellHum);
 				tableResults.appendChild(cellIconHum);
 				sensors.appendChild(tableResults);
+
+
 			}
-			// var relays = document.createElement("fieldset");
-			// relays.className = "relays-assistant";
-			
-			// var relaysLegend = document.createElement("legend");
-			// relaysLegend.innerHTML = this.dataRequest.relayStatus.bedroom.status;
+			var lightSensor = document.createElement("span");
+			wrapper.appendChild(lightSensor);
+			lightSensor.innerHTML = this.dataRequest.relays[0].bedlight;
+			lightSensor.id = "light-status";
 			// relays.appendChild(relaysLegend);
 			wrapper.appendChild(sensors);
 		}
@@ -176,12 +172,26 @@ Module.register("MMM-Arduino-Control", {
 
 	// socketNotificationReceived from helper
 	socketNotificationReceived: function (notification, payload) {
-		console.log(notification);
 		if (notification === "MMM-Arduino-Control-NOTIFICATION_TEST") {
 			// set dataNotification
 
 			this.dataNotification = payload;
 			this.updateDom();
 		}
+		else if (notification === "TURNONLIGHT"){
+
+			
+		}
 	},
+	// receive commands from other modules
+	notificationReceived: function(notification, payload, sender){
+		var self = this;
+		if((notification === "TURNONLIGHT" || notification === "TURNOFFLIGHT") && sender.name === "MMM-Remote-Control"){
+		  //handle the payload: {foo: "bar"}
+		  console.log(notification);
+		  console.log(payload);
+		  self.getData();
+		  self.updateDom(self.config.animationSpeed);
+		}
+	  }
 });
