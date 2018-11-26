@@ -11,7 +11,8 @@ Module.register("MMM-Arduino-Control", {
 	defaults: {
 		updateInterval: 10 * 60 * 1000,
 		retryDelay: 5000,
-		animationSpeed: 2000
+		animationSpeed: 2000,
+
 	},
 
 	getStyles: function () {
@@ -96,57 +97,37 @@ Module.register("MMM-Arduino-Control", {
 
 		var wrapper = document.createElement("div");
 		if (this.dataRequest) {
-
+			var bulbColor;
 			var sensors = document.createElement("table");
-
-
-			for (var i = 0; i < this.dataRequest.tempSensors.length; i++) {
-				var tableResults = document.createElement("tr");
-				var cellIconTemp = document.createElement("td");
-				var cellIconHum = document.createElement("td");
-				var spanCellTemp = document.createElement("td");
-				var valueCellTemp = document.createElement("td");
-				var valueCellHum = document.createElement("td");
-
-				// emptyCell.className ="fas fa-user";
-
-				var iconTemp = document.createElement("i");
-				iconTemp.className = "fa";
-				var iconHum = document.createElement("i");
-				iconHum.className = "wi wi-humidity humidityIcon";
-
-				iconTemp.classList.add(this.dataRequest.tempSensors[i].icon);
-
-				var badgeSpan = document.createElement("span");
-				badgeSpan.innerHTML = this.dataRequest.tempSensors[i].badge;
-
-				var valueSpanTemp = document.createElement("span");
-				var valueSpanHum = document.createElement("span");
-
-				valueSpanTemp.innerHTML = this.dataRequest.tempSensors[i].temp + this.dataRequest.tempSensors[i].unit + "&nbsp;&nbsp;";
-				valueSpanHum.innerHTML = this.dataRequest.humiditySensors[i].humidity;
-
-
-				valueCellTemp.appendChild(valueSpanTemp);
-				spanCellTemp.appendChild(badgeSpan);
-				cellIconTemp.appendChild(iconTemp);
-				valueCellHum.appendChild(valueSpanHum);
-				cellIconHum.appendChild(iconHum);
-				tableResults.appendChild(cellIconTemp);
-				tableResults.appendChild(spanCellTemp);
-				tableResults.appendChild(valueCellTemp);
-				tableResults.appendChild(valueCellHum);
-				tableResults.appendChild(cellIconHum);
-				sensors.appendChild(tableResults);
-
-
+			var relays = document.createElement("table");
+			if (this.dataRequest.relayStatus.furnitureLed === false) {
+				bulbColor = "#ffad99";
+			} else {
+				bulbColor = "#99ff99";
 			}
-			var lightSensor = document.createElement("span");
-			wrapper.appendChild(lightSensor);
-			lightSensor.innerHTML = this.dataRequest.relays[0].bedlight;
-			lightSensor.id = "light-status";
-			// relays.appendChild(relaysLegend);
+			for (var i = 0; i < this.dataRequest.thSensors.length; i++) {
+
+				sensors.insertAdjacentHTML('afterbegin',
+					`<tr><td><i class = "${this.dataRequest.thSensors[i].icon}"></i></td>
+				<td><span>${this.dataRequest.thSensors[i].badge}&nbsp;</span></td>
+				<td><span>${this.dataRequest.thSensors[i].temp + "°"}&nbsp;</span></td>
+				<td><span>${this.dataRequest.thSensors[i].humidity}&nbsp;</span></td>
+				<td><i class ="wi wi-humidity humidityIcon"></i></td></tr>`
+				);
+			}
+
+			relays.insertAdjacentHTML('afterbegin',
+				`<header>Lights Status &nbsp;&nbsp;</header>
+				<tr>
+					<td>
+						<span>Living Led &nbsp;<span>
+						<i class="far fa-lightbulb" style="color:${bulbColor};"></i>
+					<td>
+				</tr>`
+			);
+
 			wrapper.appendChild(sensors);
+			wrapper.appendChild(relays);
 		}
 
 		return wrapper;
@@ -178,20 +159,14 @@ Module.register("MMM-Arduino-Control", {
 			this.dataNotification = payload;
 			this.updateDom();
 		}
-		else if (notification === "TURNONLIGHT"){
 
-			
-		}
 	},
 	// receive commands from other modules
-	notificationReceived: function(notification, payload, sender){
+	notificationReceived: function (notification, payload, sender) {
 		var self = this;
-		if((notification === "TURNONLIGHT" || notification === "TURNOFFLIGHT") && sender.name === "MMM-Remote-Control"){
-		  //handle the payload: {foo: "bar"}
-		  console.log(notification);
-		  console.log(payload);
-		  self.getData();
-		  self.updateDom(self.config.animationSpeed);
+		if ((notification === "FURNITURELEDON" || notification === "FURNITURELEDOFF") && sender.name === "MMM-Remote-Control") {
+			self.getData();
+			self.updateDom(self.config.animationSpeed);
 		}
-	  }
+	}
 });
