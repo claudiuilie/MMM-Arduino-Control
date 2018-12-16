@@ -153,9 +153,10 @@ Module.register("MMM-Arduino-Control", {
 
 	// socketNotificationReceived from helper
 	socketNotificationReceived: function (notification, payload) {
+		console.log(notification);
 		if (notification === "MMM-Arduino-Control-NOTIFICATION_TEST") {
 			// set dataNotification
-
+			
 			this.dataNotification = payload;
 			this.updateDom();
 		}
@@ -164,9 +165,22 @@ Module.register("MMM-Arduino-Control", {
 	// receive commands from other modules
 	notificationReceived: function (notification, payload, sender) {
 		var self = this;
-		if ((notification === "FURNITURELEDON" || notification === "FURNITURELEDOFF") && sender.name === "MMM-Remote-Control") {
+		if (notification === "FURNITURELED_ON" || notification === "FURNITURELED_OFF") {
+			self.callArduino(notification,payload);
+		}
+	},
+	callArduino: function(notification,payload){
+		var self = this;
+		fetch('http://192.168.1.200/?'+notification)
+		.then(function(data){
+			return data.json()
+		})
+		.then(function(arduinoResponse){
+			fetch('http://192.168.1.104:8080/syslog?type=INFO&message='+payload.message+'&silent=true', {mode:'no-cors'})
 			self.getData();
 			self.updateDom(self.config.animationSpeed);
-		}
+		})
 	}
 });
+
+
