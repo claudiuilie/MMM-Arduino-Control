@@ -176,9 +176,10 @@ Module.register("MMM-Arduino-Control", {
 			return data.json()
 		})
 		.then(function(arduinoResponse){
-			fetch('http://192.168.1.104:8080/syslog?type=INFO&message='+payload.message+'&silent=true', {mode:'no-cors'})
+			fetch('http://192.168.1.110:8080/syslog?type=INFO&message='+payload.message+'&silent=true', {mode:'no-cors'})
 			self.getData();
 			self.updateDom(self.config.animationSpeed);
+			// self.sendNotification("ASSISTANT_SAY", payload.message);  // assistant confirm
 		})
 	}
 });
