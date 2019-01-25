@@ -106,25 +106,26 @@ Module.register("MMM-Arduino-Control", {
 				bulbColor = "#99ff99";
 			}
 			for (var i = 0; i < this.dataRequest.thSensors.length; i++) {
-
-				sensors.insertAdjacentHTML('afterbegin',
-					`<tr><td><i class = "${this.dataRequest.thSensors[i].icon}"></i></td>
+				if(this.dataRequest.thSensors[i].temp > 1){
+					sensors.insertAdjacentHTML('afterbegin',
+				`<tr><td><i class = "${this.dataRequest.thSensors[i].icon}"></i></td>
 				<td><span>${this.dataRequest.thSensors[i].badge}&nbsp;</span></td>
 				<td><span>${this.dataRequest.thSensors[i].temp + "°"}&nbsp;</span></td>
 				<td><span>${this.dataRequest.thSensors[i].humidity}&nbsp;</span></td>
 				<td><i class ="wi wi-humidity humidityIcon"></i></td></tr>`
 				);
+				}
 			}
 
-			relays.insertAdjacentHTML('afterbegin',
-				`<header>Lights Status &nbsp;&nbsp;</header>
-				<tr>
-					<td>
-						<span>Living Led &nbsp;<span>
-						<i class="far fa-lightbulb" style="color:${bulbColor};"></i>
-					<td>
-				</tr>`
-			);
+			// relays.insertAdjacentHTML('afterbegin',
+			// 	`<header>Lights Status &nbsp;&nbsp;</header>
+			// 	<tr>
+			// 		<td>
+			// 			<span>Kitchen Led &nbsp;<span>
+			// 			<i class="far fa-lightbulb" style="color:${bulbColor};"></i>
+			// 		<td>
+			// 	</tr>`
+			// );
 
 			wrapper.appendChild(sensors);
 			wrapper.appendChild(relays);
