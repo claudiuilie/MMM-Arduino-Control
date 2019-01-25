@@ -7,11 +7,13 @@
  * MIT Licensed.
  */
 
+
 Module.register("MMM-Arduino-Control", {
 	defaults: {
 		updateInterval: 10 * 60 * 1000,
 		retryDelay: 5000,
 		animationSpeed: 2000,
+		urlApi:"http://192.168.1.200/"
 
 	},
 
@@ -28,7 +30,7 @@ Module.register("MMM-Arduino-Control", {
 		this.loaded = false;
 
 		// Schedule update timer.
-		this.getData();
+		this.getData(this.defaults.urlApi);
 		setInterval(function () {
 			self.updateDom();
 		}, this.config.updateInterval);
@@ -42,8 +44,6 @@ Module.register("MMM-Arduino-Control", {
 	 */
 	getData: function (urlApi) {
 		var self = this;
-
-		var urlApi = "http://192.168.1.200/"; // arduino ip
 		var retry = true;
 
 		var dataRequest = new XMLHttpRequest();
