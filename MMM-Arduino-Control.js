@@ -125,7 +125,6 @@ Module.register("MMM-Arduino-Control", {
 		this.dataRequest = data;
 		if (this.loaded === false) { self.updateDom(self, this.config.animationSpeed); }
 		this.loaded = true;
-		this.show(this.config.animationSpeed, { lockString: this.identifier });
 		this.sendSocketNotification("MMM-Arduino-Control-NOTIFICATION_TEST", data);
 	},
 
