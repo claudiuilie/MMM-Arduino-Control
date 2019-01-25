@@ -40,7 +40,7 @@ Module.register("MMM-Arduino-Control", {
 	 * get a URL request
 	 *
 	 */
-	getData: function () {
+	getData: function (urlApi) {
 		var self = this;
 
 		var urlApi = "http://192.168.1.200/"; // arduino ip
@@ -167,22 +167,25 @@ Module.register("MMM-Arduino-Control", {
 	notificationReceived: function (notification, payload, sender) {
 		var self = this;
 		if (notification === "FURNITURELED_ON" || notification === "FURNITURELED_OFF") {
-			self.callArduino(notification,payload);
-		}
-	},
-	callArduino: function(notification,payload){
-		var self = this;
-		fetch('http://192.168.1.200/?'+notification)
-		.then(function(data){
-			return data.json()
-		})
-		.then(function(arduinoResponse){
-			fetch('http://192.168.1.110:8080/syslog?type=INFO&message='+payload.message+'&silent=true', {mode:'no-cors'})
-			self.getData();
+			// self.callArduino(notification,payload);
+			self.getData(payload.urlApi);
 			self.updateDom(self.config.animationSpeed);
-			// self.sendNotification("ASSISTANT_SAY", payload.message);  // assistant confirm
-		})
+		}
 	}
+	// ,
+	// callArduino: function(notification,payload){
+	// 	var self = this;
+	// 	fetch('http://192.168.1.200/?'+notification)
+	// 	.then(function(data){
+	// 		return data.json()
+	// 	})
+	// 	.then(function(arduinoResponse){
+	// 		fetch('http://192.168.1.110:8080/syslog?type=INFO&message='+payload.message+'&silent=true', {mode:'no-cors'})
+	// 		self.getData();
+	// 		self.updateDom(self.config.animationSpeed);
+	// 		// self.sendNotification("ASSISTANT_SAY", payload.message);  // assistant confirm
+	// 	})
+	// }
 });
 
 
