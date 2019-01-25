@@ -25,23 +25,13 @@ Module.register("MMM-Arduino-Control", {
 		var self = this;
 		var dataRequest = null;
 		var dataNotification = null;
-
-		//Flag for check if module is loaded
 		this.loaded = false;
-
-		// Schedule update timer.
 		this.getData(this.defaults.urlApi);
 		setInterval(function () {
 			self.updateDom();
 		}, this.config.updateInterval);
 	},
 
-	/*
-	 * getData
-	 * function example return data and show it in the module wrapper
-	 * get a URL request
-	 *
-	 */
 	getData: function (urlApi) {
 		var self = this;
 		var retry = true;
@@ -71,13 +61,6 @@ Module.register("MMM-Arduino-Control", {
 
 	},
 
-
-	/* scheduleUpdate()
-	 * Schedule next update.
-	 *
-	 * argument delay number - Milliseconds before next update.
-	 *  If empty, this.config.updateInterval is used.
-	 */
 	scheduleUpdate: function (delay) {
 		var nextLoad = this.config.updateInterval;
 		if (typeof delay !== "undefined" && delay >= 0) {
@@ -92,9 +75,6 @@ Module.register("MMM-Arduino-Control", {
 
 	getDom: function () {
 		var self = this;
-
-		// create element wrapper for show into the module
-
 		var wrapper = document.createElement("div");
 		if (this.dataRequest) {
 			var bulbColor;
@@ -144,48 +124,28 @@ Module.register("MMM-Arduino-Control", {
 		var self = this;
 		this.dataRequest = data;
 		if (this.loaded === false) { self.updateDom(self, this.config.animationSpeed); }
-		//<------------aici crapa
 		this.loaded = true;
 		this.show(this.config.animationSpeed, { lockString: this.identifier });
-		// the data if load
-		// send notification to helper
 		this.sendSocketNotification("MMM-Arduino-Control-NOTIFICATION_TEST", data);
 	},
 
-	// socketNotificationReceived from helper
 	socketNotificationReceived: function (notification, payload) {
 		console.log(notification);
 		if (notification === "MMM-Arduino-Control-NOTIFICATION_TEST") {
-			// set dataNotification
-			
 			this.dataNotification = payload;
 			this.updateDom();
 		}
 
 	},
-	// receive commands from other modules
+
 	notificationReceived: function (notification, payload, sender) {
 		var self = this;
 		if (notification === "FURNITURELED_ON" || notification === "FURNITURELED_OFF") {
-			// self.callArduino(notification,payload);
 			self.getData(payload.urlApi);
 			self.updateDom(self.config.animationSpeed);
 		}
 	}
-	// ,
-	// callArduino: function(notification,payload){
-	// 	var self = this;
-	// 	fetch('http://192.168.1.200/?'+notification)
-	// 	.then(function(data){
-	// 		return data.json()
-	// 	})
-	// 	.then(function(arduinoResponse){
-	// 		fetch('http://192.168.1.110:8080/syslog?type=INFO&message='+payload.message+'&silent=true', {mode:'no-cors'})
-	// 		self.getData();
-	// 		self.updateDom(self.config.animationSpeed);
-	// 		// self.sendNotification("ASSISTANT_SAY", payload.message);  // assistant confirm
-	// 	})
-	// }
+
 });
 
 
