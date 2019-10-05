@@ -13,7 +13,7 @@ Module.register("MMM-Arduino-Control", {
 		updateInterval: 10 * 60 * 1000,
 		retryDelay: 5000,
 		animationSpeed: 2000,
-		urlApi:"http://192.168.1.200/"
+		urlApi:"http://192.168.1.103/sensors"
 
 	},
 
@@ -39,12 +39,11 @@ Module.register("MMM-Arduino-Control", {
 		var dataRequest = new XMLHttpRequest();
 		dataRequest.open("GET", urlApi, true);
 		dataRequest.onreadystatechange = function () {
-			console.log(this.readyState);
+
 			if (this.readyState === 4) {
-				console.log(this.status);
+
 				if (this.status === 200) {
 					self.processData(JSON.parse(this.response));
-					// console.log(this.response);
 				} else if (this.status === 401) {
 					self.updateDom(self.config.animationSpeed);
 					Log.error(self.name, this.status);
@@ -74,24 +73,19 @@ Module.register("MMM-Arduino-Control", {
 	},
 
 	getDom: function () {
-		var self = this;
+
 		var wrapper = document.createElement("div");
 		if (this.dataRequest) {
-			var bulbColor;
 			var sensors = document.createElement("table");
 			var relays = document.createElement("table");
-			if (this.dataRequest.relayStatus.furnitureLed === false) {
-				bulbColor = "#ffad99";
-			} else {
-				bulbColor = "#99ff99";
-			}
-			for (var i = 0; i < this.dataRequest.thSensors.length; i++) {
-				if(this.dataRequest.thSensors[i].temp > 1){
+
+			for (var i = 0; i < this.dataRequest.length; i++) {
+				if(this.dataRequest[i].temp > 1){
+					console.log(this.dataRequest[i])
 					sensors.insertAdjacentHTML('afterbegin',
-				`<tr><td><i class = "${this.dataRequest.thSensors[i].icon}"></i></td>
-				<td><span>${this.dataRequest.thSensors[i].badge}&nbsp;</span></td>
-				<td><span>${this.dataRequest.thSensors[i].temp + "°"}&nbsp;</span></td>
-				<td><span>${this.dataRequest.thSensors[i].humidity}&nbsp;</span></td>
+				`<tr><td><i class = "${this.dataRequest[i].icon}"></i></td>
+				<td><span>${this.dataRequest[i].temp + "°"}&nbsp;</span></td>
+				<td><span>${this.dataRequest[i].humidity + "%"}&nbsp;</span></td>
 				<td><i class ="wi wi-humidity humidityIcon"></i></td></tr>`
 				);
 				}
@@ -122,7 +116,7 @@ Module.register("MMM-Arduino-Control", {
 	},
 	processData: function (data) {
 		var self = this;
-		this.dataRequest = data;
+		this.dataRequest = JSON.parse(data.sensors);
 		if (this.loaded === false) { self.updateDom(self, this.config.animationSpeed); }
 		this.loaded = true;
 		this.sendSocketNotification("MMM-Arduino-Control-NOTIFICATION_TEST", data);
