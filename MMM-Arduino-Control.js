@@ -81,11 +81,25 @@ Module.register("MMM-Arduino-Control", {
 
 			for (var i = 0; i < this.dataRequest.length; i++) {
 				if(this.dataRequest[i].temp > 1){
+				    let icon = this.dataRequest[i].icon;
+				    console.log(icon)
+
+					switch(icon) {
+						case "fas fa-utensils":
+							icon = "fa fa-cutlery"
+							break;
+						case "fas fa-bed":
+							icon = "fa fa-bed"
+							break;
+						case "fas fa-couch":
+							icon = "fa fa-television"
+							break;
+					}
 					console.log(this.dataRequest[i])
 					sensors.insertAdjacentHTML('afterbegin',
-				`<tr><td><i class = "${this.dataRequest[i].icon}"></i></td>
+				`<tr><td><i class = "${icon}"></i></td>
 				<td><span>${this.dataRequest[i].temp + "°"}&nbsp;</span></td>
-				<td><span>${this.dataRequest[i].humidity + "%"}&nbsp;</span></td>
+				<td><span>${this.dataRequest[i].humidity }&nbsp;</span></td>
 				<td><i class ="wi wi-humidity humidityIcon"></i></td></tr>`
 				);
 				}
