@@ -1,0 +1,112 @@
+package com.worldpay.css.qi.web_services.database;
+
+import org.awaitility.Awaitility;
+import org.awaitility.Duration;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
+import org.springframework.lang.Nullable;
+import org.springframework.util.ClassUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+public class JdbcOperations {
+
+    private final JdbcTemplate disputesJdbcTemplate;
+
+    private static final Logger logger = LoggerFactory.getLogger(JdbcOperations.class);
+
+    public JdbcOperations(JdbcTemplate disputesJdbcTemplate) {
+        this.disputesJdbcTemplate = disputesJdbcTemplate;
+    }
+
+    public int countAll(String tableName) {
+        String sql = String.format("SELECT count(*) FROM %s", tableName);
+        return this.queryForObject(sql, Integer.class);
+    }
+
+    public int countAllWithSpecifKey(String tableName, String columnName, String columnValue) {
+        String sql = String
+                .format("SELECT count(*) FROM %s WHERE %s = '%s'", tableName, columnName, columnValue);
+        return this.queryForObject(sql, Integer.class);
+    }
+
+    public int countAllWithSpecifKey(String tableName, String columnName, String columnValue,
+                                     String key, String value) {
+        String sql = String
+                .format("SELECT count(*) FROM %s WHERE %s = '%s' AND %s = '%s'", tableName, columnName,
+                        columnValue, key, value);
+        return this.queryForObject(sql, Integer.class);
+    }
+
+
+    public <T> T queryForObject(String sql, Class<T> klass, Object... params) {
+        return this.disputesJdbcTemplate.queryForObject(sql, klass, params);
+    }
+
+    public int update(String sql, Object... params) {
+        logger.debug(sql);
+        return this.disputesJdbcTemplate.update(sql, params);
+    }
+
+    public void execute(String sql) {
+        logger.debug(sql);
+        this.disputesJdbcTemplate.execute(sql);
+    }
+
+    public int deleteAll(String tableName) {
+        String sql = String.format("DELETE FROM %s", tableName);
+        return this.update(sql);
+    }
+
+    public int deleteAllWithSpecificKey(String tableName, String key, String value) {
+        String sql = String.format("DELETE FROM %s WHERE %s=%s", tableName, key, value);
+        return this.update(sql);
+    }
+
+    public int deleteAllWhereKeyContainsValue(String tableName, String key, String value) {
+        String sql = String.format("DELETE FROM %s WHERE %s like '%s'", tableName, key, value);
+        return this.update(sql);
+    }
+
+    public <T> List<T> query(String sql, Class<T> returnType, Object... params) {
+        RowMapper<T> rowMapper =
+                !String.class.equals(returnType) && !ClassUtils.isPrimitiveOrWrapper(returnType)
+                        ? new BeanPropertyRowMapper(returnType) : new SingleColumnRowMapper(returnType);
+        logger.debug(sql);
+
+        return this.disputesJdbcTemplate.query(sql, params, (RowMapper) rowMapper);
+    }
+
+    public List<Map<String, Object>> queryForList(String sql, Object... params) {
+        return this.disputesJdbcTemplate.queryForList(sql, params);
+    }
+
+    public String queryAndRetry(String queryStr) {
+        Awaitility.await()
+                .pollDelay(Duration.ONE_SECOND)
+                .atMost(new Duration(180, TimeUnit.SECONDS))
+                .untilAsserted(() ->
+                        Assert.assertTrue("Value not saved properly in Dispute DB for query "+queryStr,
+                                query(queryStr, String.class).size() > 0));
+
+        String value = query(queryStr, String.class).get(0);
+        logger.debug(value);
+        return value;
+    }
+
+    public int queryIfValueIsSaved(String queryStr) {
+        int value = query(queryStr, String.class).size();
+        return value;
+    }
+
+    public int[] batch(String sql, List<Object[]> params) {
+        return this.disputesJdbcTemplate.batchUpdate(sql, params);
+    }
+}
